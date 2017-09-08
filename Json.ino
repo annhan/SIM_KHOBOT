@@ -42,52 +42,50 @@ void tachsohex(char* data){
   unsigned int checksum=0;
   boolean landau=true;
   Serial.println(dodai);
-  String datareb=String(data[18]);
-  datareb=datareb+String(data[19]);
+  String datareb=String(data[18])+String(data[19]);
   TSR_ID=hexToDec(datareb);
-  datareb=String(data[20]);
-  datareb=datareb+String(data[21]);
+  datareb=String(data[20])+String(data[21]);
   dau=hexToDec(datareb);
-  datareb=String(data[22]);
-  datareb=datareb+String(data[23]);
+  datareb=String(data[22])+String(data[23]);
   sau=hexToDec(datareb);
   SRPC_ID=dau*256+sau;
-  datareb=String(data[26]);
-  datareb=datareb+String(data[27]);
+  datareb=String(data[26])+String(data[27]);
   so_data=hexToDec(datareb);
   for (byte i=0;i<so_data;i++){
     Serial.print("Lan ");
     Serial.println(i);
-    datareb=String(data[28+i*16]);
-    datareb=datareb+String(data[29+i*16]);
+    datareb=String(data[28+i*16])+String(data[29+i*16]);
     byte loai_data=hexToDec(datareb);
     switch (loai_data){
       case 35: //nhiệt độ, độ ẩm
       {
-        datareb=String(data[30+i*16]);
-        datareb=datareb+String(data[31+i*16]);
+        datareb=String(data[30+i*16])+String(data[31+i*16]);
         dau=hexToDec(datareb);
-        datareb=String(data[32+i*16]);
-        datareb=datareb+String(data[33+i*16]);
+        datareb=String(data[32+i*16])+String(data[33+i*16]);
         sau=hexToDec(datareb);
         unsigned int tab_id=dau*256+sau;
-        datareb=String(data[34+i*16]);
-        datareb=datareb+String(data[35+i*16]);
+        datareb=String(data[34+i*16])+String(data[35+i*16]);
         dau=hexToDec(datareb);
-        datareb=String(data[36+i*16]);
-        datareb=datareb+String(data[37+i*16]);
+        datareb=String(data[36+i*16])+String(data[37+i*16]);
         sau=hexToDec(datareb);
         float nhietdo=(dau*256+sau)/100.00;
-        datareb=String(data[38+i*16]);
-        datareb=datareb+String(data[39+i*16]);
+        datareb=String(data[38+i*16])+String(data[39+i*16]);
         dau=hexToDec(datareb);
-        datareb=String(data[40+i*16]);
-        datareb=datareb+String(data[41+i*16]);
+        datareb=String(data[40+i*16])+String(data[41+i*16]);
         sau=hexToDec(datareb);
         float doam=(dau*256+sau)/100.00;
         Serial.println(tab_id);
-        Serial.println(nhietdo);
-        Serial.println(doam);
+        for (int j=0;j<15;j++){
+          unsigned int data_tab=*((unsigned int*)&SensorStruct + (j*8));
+          *((boolean*)&SensorStruct + (j))=true;
+          if (tab_id==data_tab){
+            *((float*)&SensorStruct + ((j*8)+7))=nhietdo;
+            *((float*)&SensorStruct + ((j*8)+8))=doam;
+                    Serial.println("Dung tab");
+            Serial.println(*((float*)&SensorStruct + ((j*8)+7)));
+            Serial.println(*((float*)&SensorStruct + ((j*8)+8)));
+          }
+        }
         break;
       }
       default :{

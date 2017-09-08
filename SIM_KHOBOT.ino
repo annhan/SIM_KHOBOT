@@ -186,82 +186,284 @@ byte guitinnhan=0;
 //  byte subnet[4];
 
 //0 den 419 byte
+
+struct cambiensosanh {
+  boolean cb1;
+  boolean cb2;
+  boolean cb3;
+  boolean cb4;
+  boolean cb5;
+  boolean cb6;
+  boolean cb7;
+  boolean cb8;
+  boolean cb9;
+  boolean cb10;
+  boolean cb11;
+  boolean cb12;
+  boolean cb13;
+  boolean cb14;
+  boolean cb15;
+} cambiensosanh_struc = {
+ false,
+ false,
+ false,
+ false,
+ false,
+ false,
+ false,
+ false,
+ false,
+ false,
+ false,
+ false,
+ false,
+ false,
+ false
+};
 struct SensorStructConf {
-  float S1_T;
-  float S1_D;
-
-  float S2_T;
-  float S2_D;
-
-  float S3_T;
-  float S3_D;
-
-  float S4_T;
-  float S4_D;
-
-  float S5_T;
-  float S5_D;
-
-  float S6_T;
-  float S6_D;
-
-  float S7_T;
-  float S7_D;
-
-  float S8_T;
-  float S8_D;
-
-  float S9_T;
-  float S9_D;
-
-  float S10_T;
-  float S10_D;
-
-  float S11_T;
-  float S11_D;
-
-  float S12_T;
-  float S12_D;
-
-  float S13_T;
-  float S13_D;
-
-  float S14_T;
-  float S14_D;
-  float S15_T;
-  float S15_D;
+  unsigned int S1_tab;
+  unsigned int S1_khuvuc;
+  float S1T_T;
+  float S1T_D;
+  float S1H_T;
+  float S1H_D;
+  float S1T_Status;
+  float S1H_Status;
+  unsigned int S2_tab;
+  unsigned int S2_khuvuc;
+  float S2T_T;
+  float S2T_D;
+  float S2H_T;
+  float S2H_D;
+  float S2T_Status;
+  float S2H_Status;
+  unsigned int S3_tab;
+  unsigned int S3_khuvuc;
+  float S3T_T;
+  float S3T_D;
+  float S3H_T;
+  float S3H_D;
+    float S3T_Status;
+  float S3H_Status;
+  unsigned int S4_tab;
+  unsigned int S4_khuvuc;
+  float S4T_T;
+  float S4T_D;
+  float S4H_T;
+  float S4H_D;
+    float S4T_Status;
+  float S4H_Status;
+  unsigned int S5_tab;
+  unsigned int S5_khuvuc;
+  float S5T_T;
+  float S5T_D;
+  float S5H_T;
+  float S5H_D;
+    float S5T_Status;
+  float S5H_Status;
+  unsigned int S6_tab;
+  unsigned int S6_khuvuc;
+  float S6T_T;
+  float S6T_D;
+  float S6H_T;
+  float S6H_D;
+    float S6T_Status;
+  float S6H_Status;
+  unsigned int S7_tab;
+  unsigned int S7_khuvuc;
+  float S7T_T;
+  float S7T_D;
+  float S7H_T;
+  float S7H_D;
+    float S7T_Status;
+  float S7H_Status;
+  unsigned int S8_tab;
+  unsigned int S8_khuvuc;
+  float S8T_T;
+  float S8T_D;
+  float S8H_T;
+  float S8H_D;
+    float S8T_Status;
+  float S8H_Status;
+  unsigned int S9_tab;
+  unsigned int S9_khuvuc;
+  float S9T_T;
+  float S9T_D;
+  float S9H_T;
+  float S9H_D;
+    float S9T_Status;
+  float S9H_Status;
+  unsigned int S10_tab;
+  unsigned int S10_khuvuc;
+  float S10T_T;
+  float S10T_D;
+  float S10H_T;
+  float S10H_D;
+    float S10T_Status;
+  float S10H_Status;
+  unsigned int S11_tab;
+  unsigned int S11_khuvuc;
+  float S11T_T;
+  float S11T_D;
+  float S11H_T;
+  float S11H_D;
+    float S11T_Status;
+  float S11H_Status;
+  unsigned int S12_tab;
+  unsigned int S12_khuvuc;
+  float S12T_T;
+  float S12T_D;
+  float S12H_T;
+  float S12H_D;
+    float S12T_Status;
+  float S12H_Status;
+  unsigned int S13_tab;
+  unsigned int S13_khuvuc;
+  float S13T_T;
+  float S13T_D;
+  float S13H_T;
+  float S13H_D;
+    float S13T_Status;
+  float S13H_Status;
+  unsigned int S14_tab;
+  unsigned int S14_khuvuc;
+  float S14T_T;
+  float S14T_D;
+  float S14H_T;
+  float S14H_D;
+    float S14T_Status;
+  float S14H_Status;
+  unsigned int S15_tab;
+  unsigned int S15_khuvuc;
+  float S15T_T;
+  float S15T_D;
+  float S15H_T;
+  float S15H_D;
+    float S15T_Status;
+  float S15H_Status;
 } SensorStruct = {
+  1,
+  1,
   0.01,
   0.11,
   0.02,
   0.22,
+    0.00,
+  0.00,
+    2,
+  2,
   0.03,
   0.33,
   0.04,
   0.44,
+      0.00,
+  0.00,
+    3,
+  3,
   0.05,
   0.55,
   0.06,
   0.66,
+      0.00,
+  0.00,
+    4,
+  4,
   0.07,
   0.77,
   0.08,
   0.88,
+      0.00,
+  0.00,
+    5,
+  5,
     0.09,
   0.99,
     1.01,
   1.11,
+      0.00,
+  0.00,
+    6,
+  6,
     1.02,
   1.22,
     1.03,
   1.33,
+      0.00,
+  0.00,
+    07,
+  7,
     1.04,
   1.44,
     1.05,
   1.55,
-    1.06,
-  1.66
+      0.00,
+  0.00,
+ 8,
+  8,
+    1.04,
+  1.44,
+    1.05,
+  1.55,
+      0.00,
+  0.00,
+   9,
+  9,
+    1.04,
+  1.44,
+    1.05,
+  1.55,
+      0.00,
+  0.00,
+   10,
+  10,
+    1.04,
+  1.44,
+    1.05,
+  1.55,
+      0.00,
+  0.00,
+   11,
+  11,
+    1.04,
+  1.44,
+    1.05,
+  1.55,
+      0.00,
+  0.00,
+   12,
+  12,
+    1.04,
+  1.44,
+    1.05,
+  1.55,
+      0.00,
+  0.00,
+   13,
+  13,
+    1.04,
+  1.44,
+    1.05,
+  1.55,
+      0.00,
+  0.00,
+   14,
+  14,
+    1.04,
+  1.44,
+    1.05,
+  1.55,
+      0.00,
+  0.00,
+   15,
+  15,
+    1.04,
+  1.44,
+    1.05,
+  1.55
 };
+
+
+
 struct WiFiConfStruct {
   uint8_t format[4];
   char sta_ssid[32];
@@ -316,6 +518,15 @@ void kttk(String nd);
 
 void setup() {
   Serial.begin(115200);
+  unsigned int bientam=62000;
+  Serial.println(bientam);
+  Serial.println(sizeof(bientam));
+  float tam2=65.33;
+  Serial.println(tam2);
+  Serial.println(sizeof(tam2));
+    int tam3=65563;
+  Serial.println(tam3);
+  Serial.println(sizeof(tam3));
   pinMode(IN3, INPUT);
   pinMode(IN2, INPUT);
   pinMode(IN1, INPUT);
@@ -371,8 +582,9 @@ void setup() {
   timer_gio=timeled;
           manap=WiFiConf.sta_manap;
           manap.trim();
-  guitinnhan=3;
-
+  guitinnhan=0; //mac dinh bang 3 để kiểm tra tài khang
+  //write_sensor_eeprom(); 
+  //delay(1000);
   if (!root.success()) {Serial.println("parseObject() failed");}  
   else {
     
@@ -382,7 +594,8 @@ void setup() {
     Serial.println(sensor);
   Serial.println(time1);
   Serial.println(time2);
-  }  
+  } 
+  
   read_sensor_eeprom();
 }
 void loop() {
@@ -413,7 +626,8 @@ void loop() {
           } 
           break;
   }
-  
+  if (cambiensosanh_struc.cb1==true){
+    cambiensosanh_struc.cb1=false;Serial.println("So sanh CB 1");} 
   receive_uart();
   
   switch (guitinnhan){
@@ -472,8 +686,12 @@ void loop() {
                           //Serial.println(sensor);
                           //Serial.println(time1);
                           //Serial.println(time2);
-                          SensorStruct.S1_T=10.00;
+                         // SensorStruct.S1_T=10.00;
                           //tachsohex(RRS_ID);
+                       //   for (int i=0;i<90;i++){
+                         //   String tamm=String(*((unsigned int*)&SensorStruct + i));
+                        //    Serial.println(tamm);
+                        //  }
                           timer_gio = millis();
                           thoigian_gio++;
                           if (thoigian_gio > 2160){ thoigian_gio=0;guitinnhan=3;}

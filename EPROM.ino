@@ -39,6 +39,25 @@ void resetModuleId(void) {
   setDefaultModuleId(WiFiConf.module_id);
 }
 
+
+void EEPROMWriteInt(int p_address,unsigned int p_value)
+     {
+     byte lowByte = ((p_value >> 0) & 0xFF);
+     byte highByte = ((p_value >> 8) & 0xFF);
+
+     EEPROM.write(p_address, lowByte);
+     EEPROM.write(p_address + 1, highByte);
+     }
+
+//This function will read a 2 byte integer from the eeprom at the specified address and address + 1
+unsigned int EEPROMReadInt(int p_address)
+     {
+     byte lowByte = EEPROM.read(p_address);
+     byte highByte = EEPROM.read(p_address + 1);
+     unsigned int trave= ((lowByte << 0) & 0xFF) + ((highByte << 8) & 0xFF00);
+   //  Serial.println(trave);
+     return trave;
+     }
 void EEPROM_writeDouble(int ee, float value)
 {
    byte* p = (byte*)(void*)&value;
@@ -57,22 +76,61 @@ float EEPROM_readDouble(int ee)
 }
 
 void read_sensor_eeprom(){
-  int diachi=500;
-  Serial.println("Begin EEPROM");
-        for (unsigned int t = 0; t < 30; t++) {
-      *((float*)&SensorStruct + t) = EEPROM_readDouble(diachi + t*4);
-      Serial.println(*((float*)&SensorStruct + t));
+  int diachi=600;
+ // Serial.println("Begin EEPROM");
+        for (int t = 0; t < 15; t++) {
+      *((unsigned int*)&SensorStruct + ((t*8)+0)) = EEPROMReadInt(diachi + (t*32));
+      unsigned int hhhh=*((unsigned int*)&SensorStruct + ((t*8)+0));
+      Serial.print("SO TAG : ");
+      Serial.println(hhhh);
+
+      *((unsigned int*)&SensorStruct + ((t*8)+1)) = EEPROMReadInt(diachi + ((t*32)+4));
+     // Serial.println(*((unsigned int*)&SensorStruct + ((t*6)+1)));
+
+      *((float*)&SensorStruct + ((t*8)+2)) = EEPROM_readDouble(diachi + ((t*32)+8));
+      //Serial.println(*((float*)&SensorStruct + ((t*6)+2)));
+
+      *((float*)&SensorStruct + ((t*8)+3)) = EEPROM_readDouble(diachi + ((t*32)+12));
+     // Serial.println(*((float*)&SensorStruct + ((t*6)+3)));
+
+      *((float*)&SensorStruct + ((t*8)+4)) = EEPROM_readDouble(diachi + ((t*32)+16));
+     // Serial.println(*((float*)&SensorStruct + ((t*6)+4)));
+
+      *((float*)&SensorStruct + ((t*8)+5)) = EEPROM_readDouble(diachi + ((t*32)+20));
+     // Serial.println(*((float*)&SensorStruct + ((t*6)+5)));
+      
     }
-    Serial.println("END EEPROM");
+   // Serial.println("END EEPROM");
 }
 void write_sensor_eeprom(){
-  int diachi=500; 
-  for (unsigned int t = 0; t < 30; t++) {
-    float tt=*((float*)&SensorStruct + t);
-    EEPROM_writeDouble(diachi + t*4, tt);
-    Serial.println(tt);
-  }
+  int diachi=600; 
+
+  for (int t = 0; t < 15; t++) {
+      unsigned int tt=*((unsigned int*)&SensorStruct + ((t*8)+0));
+      EEPROMWriteInt(diachi + (t*32), tt);
+     // Serial.print("tab: ");
+      //Serial.println(tt);
+      
+      unsigned int tt1=*((unsigned int*)&SensorStruct + ((t*8)+1));
+      EEPROMWriteInt(diachi + ((t*32)+4), tt1);
+     // Serial.print("zone: ");
+     // Serial.println(tt1);
+
+      float tt2=*((float*)&SensorStruct + ((t*8)+2));
+      EEPROM_writeDouble(diachi + ((t*32)+8), tt2);
+     // Serial.println(tt2);
+
+      float tt3=*((float*)&SensorStruct + ((t*8)+3));
+      EEPROM_writeDouble(diachi + ((t*32)+12), tt3);
+     // Serial.println(tt3);
+
+      float tt4=*((float*)&SensorStruct + ((t*8)+4));
+      EEPROM_writeDouble(diachi + ((t*32)+16), tt4);
+     // Serial.println(tt4);
+
+      float tt5=*((float*)&SensorStruct + ((t*8)+5));
+      EEPROM_writeDouble(diachi + ((t*32)+20), tt5);
+     // Serial.println(tt5);
+    }
   EEPROM.commit();
-//  printWiFiConf();
-  
 }
