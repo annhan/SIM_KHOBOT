@@ -181,7 +181,8 @@ void init_SIM900A() {
  // wdt_disable();
  answer=0;
   int bien=0;
-  do { answer = sendAT("ATE0","OK",1000);bien=bien+1; if(bien>5){answer=1;}} while(answer==0); //Tat Echo
+
+  /*do { answer = sendAT("ATE0","OK",1000);bien=bien+1; if(bien>5){answer=1;}} while(answer==0); //Tat Echo
   bien=0;
   do { answer = sendAT("AT+IPR=115200","OK",200);bien=bien+1; if(bien>5){answer=1;}} while(answer==0);
   bien=0;
@@ -197,7 +198,7 @@ void init_SIM900A() {
   do { answer = sendAT("AT+CSAS", "OK",200);bien=bien+1; if(bien>5){answer=1;}} while(answer==0);
   bien=0;
   do { answer = sendAT("AT+CSQ", "OK",200);bien=bien+1; if(bien>5){answer=1;}} while(answer==0);
-  answer=0;
+  answer=0;*/
   yield();
   }
 //******************************************************************************************************

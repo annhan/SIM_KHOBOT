@@ -132,45 +132,7 @@ unsigned char b64_lookup(char c) {
   return -1;
 }
 /////////////////////////////////////////////////////////////////////////
-void printWiFiConf(void) {
- // Serial.println(WiFiConf.sta_ssid);
-}
 
-bool loadWiFiConf() {
-  if (EEPROM.read(WIFI_CONF_START + 0) == wifi_conf_format[0] &&
-      EEPROM.read(WIFI_CONF_START + 1) == wifi_conf_format[1] &&
-      EEPROM.read(WIFI_CONF_START + 2) == wifi_conf_format[2] &&
-      EEPROM.read(WIFI_CONF_START + 3) == wifi_conf_format[3])
-  {
-    for (unsigned int t = 0; t < sizeof(WiFiConf); t++) {
-      *((char*)&WiFiConf + t) = EEPROM.read(WIFI_CONF_START + t);
-    }
-    printWiFiConf();
-    return true;
-  } else {
-    return false;
-  }
-}
-////////////////////////////////////
-//Lưu thông số vào eeprom /////////
-//////////////////////////////////
-void saveWiFiConf(void) {
-  for (unsigned int t = 0; t < sizeof(WiFiConf); t++) {
-    EEPROM.write(WIFI_CONF_START + t, *((char*)&WiFiConf + t));
-  }
-  EEPROM.commit();
-  printWiFiConf();
-}
-void setDefaultModuleId(char* dst) {
-  uint8_t macAddr[WL_MAC_ADDR_LENGTH];
-  WiFi.macAddress(macAddr);
-  sprintf(dst, "%s%02x%02x", NAME_PREF, macAddr[WL_MAC_ADDR_LENGTH - 2], macAddr[WL_MAC_ADDR_LENGTH - 1]);
-}
-void resetModuleId(void) {
-  uint8_t macAddr[WL_MAC_ADDR_LENGTH];
-  WiFi.macAddress(macAddr);
-  setDefaultModuleId(WiFiConf.module_id);
-}
 ////////////////////////////////////
 //do wifi /////////
 //////////////////////////////////
@@ -209,9 +171,16 @@ void printIP(void) {
 }
 
 void setupWiFiConf(void) {
+  server.on("/DataRx/", HTTP_POST, []() {
+   // Serial.println("Có data server 1");
+   // String message = "Body received 1:\n";
+    str_html_khobot = server.arg("rrs_data");
+    html_khobot=true;
+    server.send(200, F("text/html"), "OK");
+  });
   server.on("/wifi_conf", []() {
-     String content = FPSTR(header); content += FPSTR(begin_title);
-     String   content1 = F("<p>Wifi Connected: ");
+    String content = FPSTR(header); content += FPSTR(begin_title);
+    String   content1 = F("<p>Wifi Connected: ");
     content1 += WiFiConf.sta_ssid;
     content1 += F("</br>IP Address: ");
     content1 += ipStr;
