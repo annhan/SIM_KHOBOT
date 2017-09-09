@@ -81,7 +81,9 @@ void read_sensor_eeprom(){
         for (int t = 0; t < 15; t++) {
       *((unsigned int*)&SensorStruct + ((t*8)+0)) = EEPROMReadInt(diachi + (t*32));
       unsigned int hhhh=*((unsigned int*)&SensorStruct + ((t*8)+0));
-      Serial.print("SO TAG : ");
+      Serial.print("SO TAG ");
+      Serial.print(t);
+      Serial.print(": ");
       Serial.println(hhhh);
 
       *((unsigned int*)&SensorStruct + ((t*8)+1)) = EEPROMReadInt(diachi + ((t*32)+4));

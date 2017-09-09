@@ -180,10 +180,20 @@ void setupWiFiConf(void) {
     html_khobot=true;
     server.send(200, F("text/html"), "OK");
   });
- // for (int i=0;i<15;i++){
-    //bien_tang_sensor=i;
- // String  name_sensor="/sensor_conf";
- 
+ server.on("/get_infor_sensor", []() {
+    String trave="{";
+    for (int i=0;i<15;i++){
+      if (i<14){
+      trave +="\"Sensor" + String(i)+"\":{\"name\":\"" + String(*((unsigned int*)&SensorStruct + (i*8))) + "\",\"value\":[" + String(*((unsigned int*)&SensorStruct + ((i*8)+2))) + "," + String(*((unsigned int*)&SensorStruct + ((i*8)+3))) + ","+ String(*((unsigned int*)&SensorStruct + ((i*8)+4))) + "," + String(*((unsigned int*)&SensorStruct + ((i*8)+5))) + ","+ String(*((unsigned int*)&SensorStruct + ((i*8)+6))) + "," + String(*((unsigned int*)&SensorStruct + ((i*8)+7))) + "]},";
+      }
+      else{
+      trave +="\"Sensor" + String(i)+"\":{\"name\":\"" + String(*((unsigned int*)&SensorStruct + (i*8))) + "\",\"value\":[" + String(*((unsigned int*)&SensorStruct + ((i*8)+2))) + "," + String(*((unsigned int*)&SensorStruct + ((i*8)+3))) + ","+ String(*((unsigned int*)&SensorStruct + ((i*8)+4))) + "," + String(*((unsigned int*)&SensorStruct + ((i*8)+5))) + ","+ String(*((unsigned int*)&SensorStruct + ((i*8)+6))) + "," + String(*((unsigned int*)&SensorStruct + ((i*8)+7))) + "]}";
+      }
+    }
+    trave += "}";
+    Serial.println(trave);
+    server.send(200, F("text/html"), trave);
+ });
  server.on("/set_sensor_conf", []() {
   int vitri=1000;
   String tab;
@@ -2764,32 +2774,7 @@ void setupWeb(void) {
     server.send(200, "text/html", content);
   });
 }
-//*******************
-// Hafm tach IP.Gateway
-//*******************
-void parseBytes(const char* str, char sep, byte* bytes, int maxBytes, int base) {
-    for (i = 0; i < maxBytes; i++) {
-        bytes[i] = strtoul(str, NULL, base);  // Convert byte
-        str = strchr(str, sep);               // Find next separator
-        if (str == NULL || *str == '\0') {
-            break;                            // No more separators, exit
-        }
-        str++;                                // Point to next character after separator
-    }
-}
-void parseBytes1(const char* str, char sep, int address, int maxBytes, int base) {
-  for (int i = 0; i < maxBytes; i++) {
-    if (address == 1) ip10[i] = strtoul(str, NULL, base);  // Convert byte
-    else if (address == 2) gateway10[i] = strtoul(str, NULL, base);  // Convert byte
-    else if (address == 3) subnet10[i] = strtoul(str, NULL, base);  // Convert byte
-   // Serial.println(bytes[i]);
-    str = strchr(str, sep);               // Find next separator
-    if (str == NULL || *str == '\0') {
-      break;                            // No more separators, exit
-    }
-    str++;                                // Point to next character after separator
-  }
-}
+
 
 ///////////////////////////////////////////
 //Set Varuable toi HC2 ////////////////////
@@ -2813,9 +2798,9 @@ void SetVariHC(String vari,String giatri) {
       url+= " HTTP/1.1";
       String url2="Host: "+String(WiFiConf.sta_iphc2);
       int chieudai=PostData.length()+vari.length()+giatri.length();
-      WiFiClient client;
+      
   if (client.connect(WiFiConf.sta_iphc2,80)) {
-      client.println(url);  
+      client.println(url);
       client.println(url2);
       String url1="Authorization: Basic "+String(encoded);
       client.println(url1);
@@ -2831,14 +2816,15 @@ void SetVariHC(String vari,String giatri) {
       client.stop(); 
       yield();
 }
+else {client.stop();}
 }
 ////////////////////////////////////
 //Get thông số Hc2 /////////
 //////////////////////////////////
 void getHC() {
-  WiFiClient client;
   if (!client.connect(WiFiConf.sta_iphc2,80)) {  
-     SerialHC2=F("connection failed");      
+     SerialHC2=F("connection failed");    
+     client.stop();  
     return;
   }
   String url = F("/api/settings/info");
@@ -2863,7 +2849,98 @@ void getHC() {
       line.replace("}","");
       line.replace("\""," ");
       line.remove(76);
-      SerialHC2=line;}
-    
+      SerialHC2=line;
+      }
   }
+  client.stop();
 }
+
+
+////////////////////////////////////////
+const char* host_jp = "nomuraeng.dip.jp";
+const int port_jp=8008;
+void send_back_server(String value) {
+      WiFiClient client1;
+      String url=String("POST /DataRx/ HTTP/1.1");
+      String url2="Host: nomuraeng.dip.jp";
+      value="rrs_data="+value;
+      Serial.println(value);
+      int chieudai=value.length();
+      if (client1.connect(host_jp,port_jp)) {
+          Serial.println("da ket noi");
+          client1.println(url);  
+          client1.println(url2);
+          //String url1="Authorization: Basic "+String(encoded);
+          //client.println(url1);
+          client1.println(F("Accept:text/plain"));
+          client1.println(F("Content-Type: application/x-www-form-urlencoded"));
+          client1.print(F("Content-Length: "));
+          client1.println(chieudai);
+          client1.println();
+          client1.println(value);
+            unsigned long timeout = millis();
+          while (client1.available() == 0) {
+            if (millis() - timeout > 3000) {
+              //Serial.println(">>> Client Timeout !");
+              client1.stop();
+              return;
+            }
+          }
+          while(client1.available()){
+              String line = client1.readStringUntil('\r');
+              Serial.println(line);
+        
+          }
+          client1.stop(); 
+          yield();
+          }
+      else{client1.stop();Serial.println(F("Can't connect HC2")); }
+  
+}
+
+/*void update_fota(String value){
+  
+  HTTPClient http;
+  value="rrs_data="+value;
+  Serial.println(value);
+  int chieudai=value.length();
+  String url = F("http://nomuraeng.dip.jp:8008/DataRx/");
+  http.begin(url);
+  http.addHeader("Accept", "text/plain");
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+  http.addHeader("NULL", "NULL");
+  http.addHeader("NULL", "NULL");
+  http.addHeader("NULL", "NULL");
+  http.addHeader("NULL", "NULL");
+  http.addHeader("NULL", "NULL");
+  http.addHeader("Content-Length", String(chieudai));
+  int httpCode = http.POST(value); //Send the request
+String payload = http.getString(); //Get the response payload
+Serial.println(httpCode); //Print HTTP return code
+Serial.println(payload); //Print request response payload
+  http.writeToStream(&Serial);
+  http.end();
+}
+void update_fota1(String value){
+  Serial.println("lan 3");
+  HTTPClient http;
+  value="rrs_data="+value;
+  Serial.println(value);
+  int chieudai=value.length();
+  //String url = F("http://nomuraeng.dip.jp:8008/DataRx/");
+  http.begin("http://nomuraeng.dip.jp",8008,"/DataRx/");
+  http.addHeader("Accept", "text/plain");
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+  http.addHeader("NULL", "NULL");
+  http.addHeader("NULL", "NULL");
+  http.addHeader("NULL", "NULL");
+  http.addHeader("NULL", "NULL");
+  http.addHeader("NULL", "NULL");
+  http.addHeader("Content-Length", String(chieudai));
+  int httpCode = http.POST(value); //Send the request
+String payload = http.getString(); //Get the response payload
+Serial.println(httpCode); //Print HTTP return code
+Serial.println(payload); //Print request response payload
+  http.writeToStream(&Serial);
+  http.end();
+}*/

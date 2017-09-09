@@ -1,5 +1,39 @@
+//*******************
+// Hafm tach IP.Gateway
+//*******************
+void parseBytes(const char* str, char sep, byte* bytes, int maxBytes, int base) {
+    for (i = 0; i < maxBytes; i++) {
+        bytes[i] = strtoul(str, NULL, base);  // Convert byte
+        str = strchr(str, sep);               // Find next separator
+        if (str == NULL || *str == '\0') {
+            break;                            // No more separators, exit
+        }
+        str++;                                // Point to next character after separator
+    }
+}
+void parseBytes1(const char* str, char sep, int address, int maxBytes, int base) {
+  for (int i = 0; i < maxBytes; i++) {
+    if (address == 1) {ip10[i] = strtoul(str, NULL, base);
+    //Serial.println(ip10[i]);
+    }  // Convert byte
+    else if (address == 2) {gateway10[i] = strtoul(str, NULL, base);
+    //Serial.println(gateway10[i]);
+    }  // Convert byte
+    else if (address == 3) {subnet10[i] = strtoul(str, NULL, base);
+    //Serial.println(subnet10[i]);
+    }  // Convert byte
+    
+    str = strchr(str, sep);               // Find next separator
+    
+    if (str == NULL || *str == '\0') {
+      break;                            // No more separators, exit
+    }
+    str++;                                // Point to next character after separator
+  }
+}
 void connect_wifi(){
-  WiFi.mode(WIFI_AP_STA);
+  
+  WiFi.setAutoReconnect(true);
   WiFi.begin(WiFiConf.sta_ssid, WiFiConf.sta_pwd);
   parseBytes1(WiFiConf.sta_ip, '.', 1, 4, 10);
   parseBytes1(WiFiConf.sta_gateway, '.', 2, 4, 10);

@@ -5,6 +5,7 @@
 #include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>
 #include <EEPROM.h>
+#include <ESP8266httpUpdate.h>
 #include <ESP8266HTTPUpdateServer.h>
 
 //SoftwareSerial swSer(14, 12, false, 1024);
@@ -17,7 +18,7 @@
 #define OUT2  2
 #define OUT3  4
 
- char* json_sensor =
+ /*char* json_sensor =
       "{"
       "\"Sensor1\":{\"name\":\"Sen1\",\"value\":[49.00,48.80,92.38]},"
       "\"Sensor2\":{\"name\":\"Sen2\",\"value\":[49.00,48.80,92.38]},"
@@ -35,7 +36,7 @@
       "\"Sensor14\":{\"name\":\"Sen14\",\"value\":[49.00,48.70,92.30]},"
       "\"Sensor15\":{\"name\":\"Sen15\",\"value\":[49.00,48.70,92.30]}"
  "}";
-char RRS_ID[]="17317D2C25442B250D24173111022301A30CD41D637123020D0C301A712EFAFB";
+char RRS_ID[]="17317D2C25442B250D24173111022301A30CD41D637123020D0C301A712EFAFB";*/
 
 //17317D2C 25442B250D 24 1731 11 02 23 01A3 0CD4 1D63 71 23 020D 0C30 1A71 2E FAFB
 
@@ -82,7 +83,7 @@ String str_html_khobot="";
 //02 điện áp Pin  - DEC 2
 //06 nhiet độ - DEC 6
 //07 độ ẩm  - DEC 7
- struct http_data_rep {
+ /*struct http_data_rep {
         byte by1;
         byte by2;
         byte by3;
@@ -119,20 +120,22 @@ String str_html_khobot="";
         byte by34;
         byte by35;
         
-} http_data_struc;
- const int BUFFER_SIZE_JSON = 2000;
- StaticJsonBuffer<BUFFER_SIZE_JSON> jsonBuffer;
-JsonObject& root = jsonBuffer.parseObject(json_sensor);
+} http_data_struc;*/
+ //const int BUFFER_SIZE_JSON = 2000;
+// StaticJsonBuffer<BUFFER_SIZE_JSON> jsonBuffer;
+//JsonObject& root = jsonBuffer.parseObject(json_sensor);
 IPAddress ip10;
 IPAddress gateway10;
 IPAddress subnet10;
-IPAddress DNS(8, 8, 8, 8);
+IPAddress DNS(8,8,8,8);
 
 const char* update_path = "/firmware";
 const char* update_username = "mhome";
 const char* update_password = "fibaro";
 const int buffer_size = 200;
 
+
+WiFiClient client;
 ESP8266WebServer server(4999);
 ESP8266HTTPUpdateServer httpUpdater;
 #define WIFI_CONF_FORMAT {0, 0, 0, 1}
@@ -521,12 +524,7 @@ void setup() {
   unsigned int bientam=62000;
   Serial.println(bientam);
   Serial.println(sizeof(bientam));
-  float tam2=65.33;
-  Serial.println(tam2);
-  Serial.println(sizeof(tam2));
-    int tam3=65563;
-  Serial.println(tam3);
-  Serial.println(sizeof(tam3));
+
   pinMode(IN3, INPUT);
   pinMode(IN2, INPUT);
   pinMode(IN1, INPUT);
@@ -554,6 +552,7 @@ void setup() {
   //delay(5000);
   EEPROM.begin(1024);
   delay(10);
+  WiFi.mode(WIFI_AP_STA);
   if (!loadWiFiConf()) {
     resetModuleId();
     saveWiFiConf();
@@ -585,7 +584,7 @@ void setup() {
   guitinnhan=0; //mac dinh bang 3 để kiểm tra tài khang
   //write_sensor_eeprom(); 
   //delay(1000);
-  if (!root.success()) {Serial.println("parseObject() failed");}  
+ /* if (!root.success()) {Serial.println("parseObject() failed");}  
   else {
     
     const char* sensor = root["Sensor1"]["name"];
@@ -594,8 +593,8 @@ void setup() {
     Serial.println(sensor);
   Serial.println(time1);
   Serial.println(time2);
-  } 
-  
+  } */
+
   read_sensor_eeprom();
 }
 void loop() {
@@ -626,8 +625,7 @@ void loop() {
           } 
           break;
   }
-  if (cambiensosanh_struc.cb1==true){
-    cambiensosanh_struc.cb1=false;Serial.println("So sanh CB 1");} 
+
   receive_uart();
   
   switch (guitinnhan){
@@ -668,11 +666,26 @@ void loop() {
     html_khobot=false;
     int str_len = str_html_khobot.length() + 1; 
     char char_array[str_len];
+    send_back_server(str_html_khobot);
+    //getHC();
+    //update_fota(str_html_khobot);
+   // update_fota1(str_html_khobot);
     str_html_khobot.toCharArray(char_array, str_len);
     str_html_khobot="";
     Serial.println(char_array);
     tachsohex(char_array);
   }
+    if (cambiensosanh_struc.cb1==true){
+      cambiensosanh_struc.cb1=false;
+      if (*((float*)&SensorStruct + 6)>*((float*)&SensorStruct + 3)){
+        Serial.println("Cảm biến 1 lớn hơn");
+      }
+      else if (*((float*)&SensorStruct + 6)<*((float*)&SensorStruct + 2)){
+        Serial.println("Cảm biến 1 nho hơn");
+      }
+    } 
+
+    
   /*if(digitalRead(IN1)==0){if (gui==0){delay(50);if(digitalRead(IN1)==0){goidt();Serial.println("IN1");gui=1;digitalWrite(OUT3,HIGH); String tinnhan="Alarm 1 OPEN";send_SMS(tinnhan);}}}
   else if(digitalRead(IN1)==1){if (gui==1){delay(50);if(digitalRead(IN1)==1){gui=0;}}}
   if(digitalRead(IN2)==0){if (gui1==0){delay(50);if(digitalRead(IN2)==0){goidt();Serial.println("IN2");gui1=1;digitalWrite(OUT3,HIGH);String tinnhan="Alarm 2 OPEN";send_SMS(tinnhan);}}}
@@ -680,9 +693,9 @@ void loop() {
   if(digitalRead(IN3)==0){if (gui2==0){delay(50);if(digitalRead(IN3)==0){goidt();Serial.println("IN3");gui2=1;digitalWrite(OUT3,HIGH);String tinnhan="Alarm 3 OPEN";send_SMS(tinnhan);}}}
   else if(digitalRead(IN3)==1){if (gui2==1){delay(50);if(digitalRead(IN3)==1){gui2=0;}}} */
   if ( (unsigned long) (millis() - timer_gio) > 10000 ){  
-                          const char* sensor = root["Sensor2"]["name"];
-                          long time1 = root["Sensor2"]["value"][0];
-                          float time2 = root["Sensor2"]["value"][1];
+                       //   const char* sensor = root["Sensor2"]["name"];
+                         // long time1 = root["Sensor2"]["value"][0];
+                        //  float time2 = root["Sensor2"]["value"][1];
                           //Serial.println(sensor);
                           //Serial.println(time1);
                           //Serial.println(time2);
