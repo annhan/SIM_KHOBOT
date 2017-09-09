@@ -2864,7 +2864,7 @@ void send_back_server(String value) {
       String url=String("POST /DataRx/ HTTP/1.1");
       String url2="Host: nomuraeng.dip.jp";
       value="rrs_data="+value;
-      Serial.println(value);
+     // Serial.println(value);
       int chieudai=value.length();
       if (client1.connect(host_jp,port_jp)) {
           Serial.println("da ket noi");
@@ -2877,7 +2877,7 @@ void send_back_server(String value) {
           client1.print(F("Content-Length: "));
           client1.println(chieudai);
           client1.println();
-          client1.print(value);
+          client1.println(value);
             unsigned long timeout = millis();
           while (client1.available() == 0) {
             if (millis() - timeout > 3000) {
@@ -2889,7 +2889,6 @@ void send_back_server(String value) {
           while(client1.available()){
               String line = client1.readStringUntil('\r');
               Serial.println(line);
-        
           }
           client1.stop(); 
           yield();

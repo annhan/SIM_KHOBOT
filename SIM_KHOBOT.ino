@@ -663,19 +663,20 @@ void loop() {
   }
 
   if (html_khobot){
+    str_html_khobot.trim();
     html_khobot=false;
     int str_len = str_html_khobot.length() + 1;
-    Serial.printf("Do dai gom %i",str_html_khobot.length());
-    Serial.println(str_html_khobot.length());
+    //Serial.printf("Do dai gom %i",str_html_khobot.length());
+   // Serial.println(str_html_khobot.length());
     char char_array[str_len];
     send_back_server(str_html_khobot);
     //getHC();
     //update_fota(str_html_khobot);
    // update_fota1(str_html_khobot);
     str_html_khobot.toCharArray(char_array, str_len);
-        Serial.print("Begin:");
-    Serial.print(str_html_khobot);
-    Serial.println("end");
+       // Serial.print("Begin:");
+   // Serial.print(str_html_khobot);
+   // Serial.println("end");
     str_html_khobot="";
 
     //Serial.println(char_array);
