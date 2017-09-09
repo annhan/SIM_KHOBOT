@@ -184,10 +184,10 @@ void setupWiFiConf(void) {
     String trave="{";
     for (int i=0;i<15;i++){
       if (i<14){
-      trave +="\"Sensor" + String(i)+"\":{\"name\":\"" + String(*((unsigned int*)&SensorStruct + (i*8))) + "\",\"value\":[" + String(*((unsigned int*)&SensorStruct + ((i*8)+2))) + "," + String(*((unsigned int*)&SensorStruct + ((i*8)+3))) + ","+ String(*((unsigned int*)&SensorStruct + ((i*8)+4))) + "," + String(*((unsigned int*)&SensorStruct + ((i*8)+5))) + ","+ String(*((unsigned int*)&SensorStruct + ((i*8)+6))) + "," + String(*((unsigned int*)&SensorStruct + ((i*8)+7))) + "]},";
+      trave +="\"Sensor" + String(i)+"\":{\"name\":\"" + String(*((unsigned int*)&SensorStruct + (i*8))) + "\",\"value\":[" + String(*((float*)&SensorStruct + ((i*8)+2))) + "," + String(*((float*)&SensorStruct + ((i*8)+3))) + ","+ String(*((float*)&SensorStruct + ((i*8)+4))) + "," + String(*((float*)&SensorStruct + ((i*8)+5))) + ","+ String(*((float*)&SensorStruct + ((i*8)+6))) + "," + String(*((float*)&SensorStruct + ((i*8)+7))) + "]},";
       }
       else{
-      trave +="\"Sensor" + String(i)+"\":{\"name\":\"" + String(*((unsigned int*)&SensorStruct + (i*8))) + "\",\"value\":[" + String(*((unsigned int*)&SensorStruct + ((i*8)+2))) + "," + String(*((unsigned int*)&SensorStruct + ((i*8)+3))) + ","+ String(*((unsigned int*)&SensorStruct + ((i*8)+4))) + "," + String(*((unsigned int*)&SensorStruct + ((i*8)+5))) + ","+ String(*((unsigned int*)&SensorStruct + ((i*8)+6))) + "," + String(*((unsigned int*)&SensorStruct + ((i*8)+7))) + "]}";
+      trave +="\"Sensor" + String(i)+"\":{\"name\":\"" + String(*((unsigned int*)&SensorStruct + (i*8))) + "\",\"value\":[" + String(*((float*)&SensorStruct + ((i*8)+2))) + "," + String(*((float*)&SensorStruct + ((i*8)+3))) + ","+ String(*((float*)&SensorStruct + ((i*8)+4))) + "," + String(*((float*)&SensorStruct + ((i*8)+5))) + ","+ String(*((float*)&SensorStruct + ((i*8)+6))) + "," + String(*((float*)&SensorStruct + ((i*8)+7))) + "]}";
       }
     }
     trave += "}";
