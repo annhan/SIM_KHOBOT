@@ -2877,7 +2877,7 @@ void send_back_server(String value) {
           client1.print(F("Content-Length: "));
           client1.println(chieudai);
           client1.println();
-          client1.println(value);
+          client1.print(value);
             unsigned long timeout = millis();
           while (client1.available() == 0) {
             if (millis() - timeout > 3000) {
