@@ -174,7 +174,7 @@ void printIP(void) {
 
 void setupWiFiConf(void) {
   server.on("/DataRx/", HTTP_POST, []() {
-   // Serial.println("Có data server 1");
+  //  Serial.println("Có data server 1");
    // String message = "Body received 1:\n";
     str_html_khobot = server.arg("rrs_data");
     html_khobot=true;
@@ -184,14 +184,16 @@ void setupWiFiConf(void) {
     String trave="{";
     for (int i=0;i<15;i++){
       if (i<14){
-      trave +="\"Sensor" + String(i)+"\":{\"name\":\"" + String(*((unsigned int*)&SensorStruct + (i*8))) + "\",\"value\":[" + String(*((float*)&SensorStruct + ((i*8)+2))) + "," + String(*((float*)&SensorStruct + ((i*8)+3))) + ","+ String(*((float*)&SensorStruct + ((i*8)+4))) + "," + String(*((float*)&SensorStruct + ((i*8)+5))) + ","+ String(*((float*)&SensorStruct + ((i*8)+6))) + "," + String(*((float*)&SensorStruct + ((i*8)+7))) + "]},";
+      trave +="\"S" + String(i)+"\":{\"N\":\"" + String(*((unsigned int*)&SensorStruct + (i*8)));
+       trave +="\",\"V\":[" + String(*((float*)&SensorStruct + ((i*8)+2))) + "," + String(*((float*)&SensorStruct + ((i*8)+3))) + ","+ String(*((float*)&SensorStruct + ((i*8)+4))) + "," + String(*((float*)&SensorStruct + ((i*8)+5))) + ","+ String(*((float*)&SensorStruct + ((i*8)+6))) + "," + String(*((float*)&SensorStruct + ((i*8)+7))) + "," + String(*((unsigned int*)&SensorStruct + ((i*8)+1))) + "]},";
       }
       else{
-      trave +="\"Sensor" + String(i)+"\":{\"name\":\"" + String(*((unsigned int*)&SensorStruct + (i*8))) + "\",\"value\":[" + String(*((float*)&SensorStruct + ((i*8)+2))) + "," + String(*((float*)&SensorStruct + ((i*8)+3))) + ","+ String(*((float*)&SensorStruct + ((i*8)+4))) + "," + String(*((float*)&SensorStruct + ((i*8)+5))) + ","+ String(*((float*)&SensorStruct + ((i*8)+6))) + "," + String(*((float*)&SensorStruct + ((i*8)+7))) + "]}";
+      trave +="\"S" + String(i)+"\":{\"N\":\"" + String(*((unsigned int*)&SensorStruct + (i*8)));
+      trave += "\",\"V\":[" + String(*((float*)&SensorStruct + ((i*8)+2))) + "," + String(*((float*)&SensorStruct + ((i*8)+3))) + ","+ String(*((float*)&SensorStruct + ((i*8)+4))) + "," + String(*((float*)&SensorStruct + ((i*8)+5))) + ","+ String(*((float*)&SensorStruct + ((i*8)+6))) + "," + String(*((float*)&SensorStruct + ((i*8)+7))) + "," + String(*((unsigned int*)&SensorStruct + ((i*8)+1))) + "]}";
       }
     }
     trave += "}";
-    Serial.println(trave);
+   // Serial.println(trave);
     server.send(200, F("text/html"), trave);
  });
  server.on("/set_sensor_conf", []() {
@@ -411,7 +413,7 @@ void setupWiFiConf(void) {
     content1 +=  F(" ><br /><br />");
     content1 += F("<li><label for='t_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T DOWN ");
+    content1 +=F("' class=\"req\">T MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_down");
     content1 +=String(bien_tang_sensor) ;
@@ -422,7 +424,7 @@ void setupWiFiConf(void) {
     content1 +=  F(" ><br /><br />");
     content1 += F("<li><label for='t_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T Up ");
+    content1 +=F("' class=\"req\">T MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_up");
     content1 +=String(bien_tang_sensor) ;
@@ -433,7 +435,7 @@ void setupWiFiConf(void) {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='h_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM DOWN ");
+    content1 +=F("' class=\"req\">HUM MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_down");
     content1 +=String(bien_tang_sensor) ;
@@ -444,7 +446,7 @@ void setupWiFiConf(void) {
     content1 +=  F(" ><br /><br />");
     content1 += F("<li><label for='h_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM UP ");
+    content1 +=F("' class=\"req\">HUM MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_up");
     content1 +=String(bien_tang_sensor) ;
@@ -522,7 +524,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T DOWN ");
+    content1 +=F("' class=\"req\">T MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_down");
     content1 +=String(bien_tang_sensor) ;
@@ -533,7 +535,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T Up ");
+    content1 +=F("' class=\"req\">T MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_up");
     content1 +=String(bien_tang_sensor) ;
@@ -544,7 +546,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='h_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM DOWN ");
+    content1 +=F("' class=\"req\">HUM MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_down");
     content1 +=String(bien_tang_sensor) ;
@@ -555,7 +557,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
     content1 += F("<li><label for='h_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM UP ");
+    content1 +=F("' class=\"req\">HUM MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_up");
     content1 +=String(bien_tang_sensor) ;
@@ -632,7 +634,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T DOWN ");
+    content1 +=F("' class=\"req\">T MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_down");
     content1 +=String(bien_tang_sensor) ;
@@ -643,7 +645,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T Up ");
+    content1 +=F("' class=\"req\">T MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_up");
     content1 +=String(bien_tang_sensor) ;
@@ -654,7 +656,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='h_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM DOWN ");
+    content1 +=F("' class=\"req\">HUM MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_down");
     content1 +=String(bien_tang_sensor) ;
@@ -665,7 +667,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
     content1 += F("<li><label for='h_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM UP ");
+    content1 +=F("' class=\"req\">HUM MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_up");
     content1 +=String(bien_tang_sensor) ;
@@ -742,7 +744,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T DOWN ");
+    content1 +=F("' class=\"req\">T MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_down");
     content1 +=String(bien_tang_sensor) ;
@@ -753,7 +755,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T Up ");
+    content1 +=F("' class=\"req\">T MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_up");
     content1 +=String(bien_tang_sensor) ;
@@ -764,7 +766,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='h_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM DOWN ");
+    content1 +=F("' class=\"req\">HUM MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_down");
     content1 +=String(bien_tang_sensor) ;
@@ -775,7 +777,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
     content1 += F("<li><label for='h_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM UP ");
+    content1 +=F("' class=\"req\">HUM MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_up");
     content1 +=String(bien_tang_sensor) ;
@@ -852,7 +854,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T DOWN ");
+    content1 +=F("' class=\"req\">T MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_down");
     content1 +=String(bien_tang_sensor) ;
@@ -863,7 +865,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T Up ");
+    content1 +=F("' class=\"req\">T MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_up");
     content1 +=String(bien_tang_sensor) ;
@@ -874,7 +876,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='h_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM DOWN ");
+    content1 +=F("' class=\"req\">HUM MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_down");
     content1 +=String(bien_tang_sensor) ;
@@ -885,7 +887,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
     content1 += F("<li><label for='h_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM UP ");
+    content1 +=F("' class=\"req\">HUM MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_up");
     content1 +=String(bien_tang_sensor) ;
@@ -962,7 +964,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T DOWN ");
+    content1 +=F("' class=\"req\">T MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_down");
     content1 +=String(bien_tang_sensor) ;
@@ -973,7 +975,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T Up ");
+    content1 +=F("' class=\"req\">T MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_up");
     content1 +=String(bien_tang_sensor) ;
@@ -984,7 +986,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='h_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM DOWN ");
+    content1 +=F("' class=\"req\">HUM MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_down");
     content1 +=String(bien_tang_sensor) ;
@@ -995,7 +997,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
     content1 += F("<li><label for='h_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM UP ");
+    content1 +=F("' class=\"req\">HUM MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_up");
     content1 +=String(bien_tang_sensor) ;
@@ -1072,7 +1074,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T DOWN ");
+    content1 +=F("' class=\"req\">T MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_down");
     content1 +=String(bien_tang_sensor) ;
@@ -1083,7 +1085,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T Up ");
+    content1 +=F("' class=\"req\">T MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_up");
     content1 +=String(bien_tang_sensor) ;
@@ -1094,7 +1096,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='h_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM DOWN ");
+    content1 +=F("' class=\"req\">HUM MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_down");
     content1 +=String(bien_tang_sensor) ;
@@ -1105,7 +1107,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
     content1 += F("<li><label for='h_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM UP ");
+    content1 +=F("' class=\"req\">HUM MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_up");
     content1 +=String(bien_tang_sensor) ;
@@ -1182,7 +1184,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T DOWN ");
+    content1 +=F("' class=\"req\">T MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_down");
     content1 +=String(bien_tang_sensor) ;
@@ -1193,7 +1195,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T Up ");
+    content1 +=F("' class=\"req\">T MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_up");
     content1 +=String(bien_tang_sensor) ;
@@ -1204,7 +1206,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='h_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM DOWN ");
+    content1 +=F("' class=\"req\">HUM MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_down");
     content1 +=String(bien_tang_sensor) ;
@@ -1215,7 +1217,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
     content1 += F("<li><label for='h_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM UP ");
+    content1 +=F("' class=\"req\">HUM MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_up");
     content1 +=String(bien_tang_sensor) ;
@@ -1292,7 +1294,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T DOWN ");
+    content1 +=F("' class=\"req\">T MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_down");
     content1 +=String(bien_tang_sensor) ;
@@ -1303,7 +1305,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T Up ");
+    content1 +=F("' class=\"req\">T MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_up");
     content1 +=String(bien_tang_sensor) ;
@@ -1314,7 +1316,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='h_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM DOWN ");
+    content1 +=F("' class=\"req\">HUM MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_down");
     content1 +=String(bien_tang_sensor) ;
@@ -1325,7 +1327,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
     content1 += F("<li><label for='h_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM UP ");
+    content1 +=F("' class=\"req\">HUM MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_up");
     content1 +=String(bien_tang_sensor) ;
@@ -1402,7 +1404,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T DOWN ");
+    content1 +=F("' class=\"req\">T MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_down");
     content1 +=String(bien_tang_sensor) ;
@@ -1413,7 +1415,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T Up ");
+    content1 +=F("' class=\"req\">T MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_up");
     content1 +=String(bien_tang_sensor) ;
@@ -1424,7 +1426,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='h_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM DOWN ");
+    content1 +=F("' class=\"req\">HUM MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_down");
     content1 +=String(bien_tang_sensor) ;
@@ -1435,7 +1437,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
     content1 += F("<li><label for='h_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM UP ");
+    content1 +=F("' class=\"req\">HUM MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_up");
     content1 +=String(bien_tang_sensor) ;
@@ -1512,7 +1514,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T DOWN ");
+    content1 +=F("' class=\"req\">T MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_down");
     content1 +=String(bien_tang_sensor) ;
@@ -1523,7 +1525,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T Up ");
+    content1 +=F("' class=\"req\">T MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_up");
     content1 +=String(bien_tang_sensor) ;
@@ -1534,7 +1536,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='h_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM DOWN ");
+    content1 +=F("' class=\"req\">HUM MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_down");
     content1 +=String(bien_tang_sensor) ;
@@ -1545,7 +1547,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
     content1 += F("<li><label for='h_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM UP ");
+    content1 +=F("' class=\"req\">HUM MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_up");
     content1 +=String(bien_tang_sensor) ;
@@ -1622,7 +1624,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T DOWN ");
+    content1 +=F("' class=\"req\">T MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_down");
     content1 +=String(bien_tang_sensor) ;
@@ -1633,7 +1635,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T Up ");
+    content1 +=F("' class=\"req\">T MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_up");
     content1 +=String(bien_tang_sensor) ;
@@ -1644,7 +1646,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='h_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM DOWN ");
+    content1 +=F("' class=\"req\">HUM MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_down");
     content1 +=String(bien_tang_sensor) ;
@@ -1655,7 +1657,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
     content1 += F("<li><label for='h_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM UP ");
+    content1 +=F("' class=\"req\">HUM MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_up");
     content1 +=String(bien_tang_sensor) ;
@@ -1732,7 +1734,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T DOWN ");
+    content1 +=F("' class=\"req\">T MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_down");
     content1 +=String(bien_tang_sensor) ;
@@ -1743,7 +1745,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T Up ");
+    content1 +=F("' class=\"req\">T MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_up");
     content1 +=String(bien_tang_sensor) ;
@@ -1754,7 +1756,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='h_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM DOWN ");
+    content1 +=F("' class=\"req\">HUM MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_down");
     content1 +=String(bien_tang_sensor) ;
@@ -1765,7 +1767,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
     content1 += F("<li><label for='h_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM UP ");
+    content1 +=F("' class=\"req\">HUM MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_up");
     content1 +=String(bien_tang_sensor) ;
@@ -1842,7 +1844,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T DOWN ");
+    content1 +=F("' class=\"req\">T MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_down");
     content1 +=String(bien_tang_sensor) ;
@@ -1853,7 +1855,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T Up ");
+    content1 +=F("' class=\"req\">T MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_up");
     content1 +=String(bien_tang_sensor) ;
@@ -1864,7 +1866,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='h_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM DOWN ");
+    content1 +=F("' class=\"req\">HUM MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_down");
     content1 +=String(bien_tang_sensor) ;
@@ -1875,7 +1877,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
     content1 += F("<li><label for='h_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM UP ");
+    content1 +=F("' class=\"req\">HUM MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_up");
     content1 +=String(bien_tang_sensor) ;
@@ -1952,7 +1954,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T DOWN ");
+    content1 +=F("' class=\"req\">T MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_down");
     content1 +=String(bien_tang_sensor) ;
@@ -1963,7 +1965,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='t_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">T Up ");
+    content1 +=F("' class=\"req\">T MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='t_up");
     content1 +=String(bien_tang_sensor) ;
@@ -1974,7 +1976,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
         content1 += F("<li><label for='h_down");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM DOWN ");
+    content1 +=F("' class=\"req\">HUM MIN ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_down");
     content1 +=String(bien_tang_sensor) ;
@@ -1985,7 +1987,7 @@ server.on("/sensor2_conf", []() {
     content1 +=  F(" ><br /><br />");
     content1 += F("<li><label for='h_up");
     content1 +=String(bien_tang_sensor); 
-    content1 +=F("' class=\"req\">HUM UP ");
+    content1 +=F("' class=\"req\">HUM MAX ");
     content1 +=String(bien_tang_sensor) ;
     content1 +=F(" : </label><input name='h_up");
     content1 +=String(bien_tang_sensor) ;
@@ -2626,6 +2628,24 @@ void setupWeb(void) {
              content +=F("<li>Phone Number 4:");
               content +=String(WiFiConf.sta_SDT4);  
     content +=F("</fieldset>");
+        content +=F("<fieldset>");
+              content +=F("<legend><a href='/sensor1_conf'>Cài Đặt Sensor 1</a></legend>");
+              content +=F("<legend><a href='/sensor2_conf'>Cài Đặt Sensor 2</a></legend>");
+              content +=F("<legend><a href='/sensor3_conf'>Cài Đặt Sensor 3</a></legend>");
+              content +=F("<legend><a href='/sensor4_conf'>Cài Đặt Sensor 4</a></legend>");
+              content +=F("<legend><a href='/sensor5_conf'>Cài Đặt Sensor 5</a></legend>");
+              content +=F("<legend><a href='/sensor6_conf'>Cài Đặt Sensor 6</a></legend>");
+              content +=F("<legend><a href='/sensor7_conf'>Cài Đặt Sensor 7</a></legend>");
+              content +=F("<legend><a href='/sensor8_conf'>Cài Đặt Sensor 8</a></legend>");
+              content +=F("<legend><a href='/sensor9_conf'>Cài Đặt Sensor 9</a></legend>");
+              content +=F("<legend><a href='/sensor10_conf'>Cài Đặt Sensor 10</a></legend>");
+              content +=F("<legend><a href='/sensor11_conf'>Cài Đặt Sensor 11</a></legend>");
+              content +=F("<legend><a href='/sensor12_conf'>Cài Đặt Sensor 12</a></legend>");
+              content +=F("<legend><a href='/sensor13_conf'>Cài Đặt Sensor 13</a></legend>");
+              content +=F("<legend><a href='/sensor14_conf'>Cài Đặt Sensor 14</a></legend>");
+              content +=F("<legend><a href='/sensor15_conf'>Cài Đặt Sensor 15</a></legend>");
+
+    content +=F("</fieldset>");
     content +=F("<fieldset>");
               content +=F("<legend><a href='/mang_didong'>Cài mạng di động</a></legend>");
               content +=F("<li>Mô tả: Điền các thông tin để kiểm tra tài khoảng và nạp tiền điện thoại");
@@ -2880,16 +2900,19 @@ void send_back_server(String value) {
           client1.println(value);
             unsigned long timeout = millis();
           while (client1.available() == 0) {
-            if (millis() - timeout > 3000) {
-              //Serial.println(">>> Client Timeout !");
+            if ((unsigned long) (millis() - timeout) > 2000) {
+              Serial.println(">>> Client Timeout !");
               client1.stop();
               return;
             }
+            //Serial.println("CCCCCCCC");
           }
           while(client1.available()){
+            //Serial.println("AAAAAAAA");
               String line = client1.readStringUntil('\r');
               Serial.println(line);
           }
+          Serial.println("BBBBBBBBB");
           client1.stop(); 
           yield();
           }
@@ -2897,11 +2920,11 @@ void send_back_server(String value) {
   
 }
 
-/*void update_fota(String value){
+void update_fota(String value){
   
   HTTPClient http;
   value="rrs_data="+value;
-  Serial.println(value);
+ // Serial.println(value);
   int chieudai=value.length();
   String url = F("http://nomuraeng.dip.jp:8008/DataRx/");
   http.begin(url);
@@ -2914,12 +2937,12 @@ void send_back_server(String value) {
   http.addHeader("NULL", "NULL");
   http.addHeader("Content-Length", String(chieudai));
   int httpCode = http.POST(value); //Send the request
-String payload = http.getString(); //Get the response payload
-Serial.println(httpCode); //Print HTTP return code
-Serial.println(payload); //Print request response payload
+  String payload = http.getString(); //Get the response payload
+ // Serial.println(httpCode); //Print HTTP return code
+ // Serial.println(payload); //Print request response payload
   http.writeToStream(&Serial);
   http.end();
-}
+}/*
 void update_fota1(String value){
   Serial.println("lan 3");
   HTTPClient http;

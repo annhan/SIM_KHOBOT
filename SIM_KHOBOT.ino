@@ -189,7 +189,72 @@ byte guitinnhan=0;
 //  byte subnet[4];
 
 //0 den 419 byte
-
+struct reset_sensor {
+  int cb1;
+  int cb2;
+  int cb3;
+  int cb4;
+  int cb5;
+  int cb6;
+  int cb7;
+  int cb8;
+  int cb9;
+  int cb10;
+  int cb11;
+  int cb12;
+  int cb13;
+  int cb14;
+  int cb15;
+} reset_sensor_struc = {
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0
+};
+struct sms_sensor {
+  int cb1;
+  int cb2;
+  int cb3;
+  int cb4;
+  int cb5;
+  int cb6;
+  int cb7;
+  int cb8;
+  int cb9;
+  int cb10;
+  int cb11;
+  int cb12;
+  int cb13;
+  int cb14;
+  int cb15;
+} sms_sensor_struc = {
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0,
+ 0
+};
 struct cambiensosanh {
   boolean cb1;
   boolean cb2;
@@ -521,10 +586,10 @@ void kttk(String nd);
 
 void setup() {
   Serial.begin(115200);
-  unsigned int bientam=62000;
-  Serial.println(bientam);
-  Serial.println(sizeof(bientam));
-
+ // unsigned int bientam=62000;
+//  Serial.println(bientam);
+ // Serial.println(sizeof(bientam));
+  
   pinMode(IN3, INPUT);
   pinMode(IN2, INPUT);
   pinMode(IN1, INPUT);
@@ -552,6 +617,7 @@ void setup() {
   //delay(5000);
   EEPROM.begin(1024);
   delay(10);
+  read_sensor_eeprom();
   WiFi.mode(WIFI_AP_STA);
   if (!loadWiFiConf()) {
     resetModuleId();
@@ -581,7 +647,7 @@ void setup() {
   timer_gio=timeled;
           manap=WiFiConf.sta_manap;
           manap.trim();
-  guitinnhan=0; //mac dinh bang 3 để kiểm tra tài khang
+  guitinnhan=3; //mac dinh bang 3 để kiểm tra tài khang
   //write_sensor_eeprom(); 
   //delay(1000);
  /* if (!root.success()) {Serial.println("parseObject() failed");}  
@@ -595,7 +661,7 @@ void setup() {
   Serial.println(time2);
   } */
 
-  read_sensor_eeprom();
+  
 }
 void loop() {
 
@@ -606,6 +672,7 @@ void loop() {
               if (statusmang==0){digitalWrite(status_led, LOW); 
               statusmang=1;
               cho=0;
+              Serial.println("NNNN");
               WiFi.softAP("GSM mHome","88888888",1,1);}     
               break;
     default:
@@ -666,52 +733,26 @@ void loop() {
     str_html_khobot.trim();
     html_khobot=false;
     int str_len = str_html_khobot.length() + 1;
-    //Serial.printf("Do dai gom %i",str_html_khobot.length());
-   // Serial.println(str_html_khobot.length());
     char char_array[str_len];
-    send_back_server(str_html_khobot);
-    //getHC();
-    //update_fota(str_html_khobot);
-   // update_fota1(str_html_khobot);
+    //send_back_server(str_html_khobot);
+    update_fota(str_html_khobot);
     str_html_khobot.toCharArray(char_array, str_len);
-       // Serial.print("Begin:");
-   // Serial.print(str_html_khobot);
-   // Serial.println("end");
     str_html_khobot="";
-
-    //Serial.println(char_array);
     tachsohex(char_array);
   }
-    if (cambiensosanh_struc.cb1==true){
-      cambiensosanh_struc.cb1=false;
-      if (*((float*)&SensorStruct + 6)>*((float*)&SensorStruct + 3)){
-        Serial.println("Cảm biến 1 lớn hơn");
-      }
-      else if (*((float*)&SensorStruct + 6)<*((float*)&SensorStruct + 2)){
-        Serial.println("Cảm biến 1 nho hơn");
-      }
-    } 
-
-    
+  
+  for (int k=0;k<15;k++){
+  boolean tieptuc_sms=sosanh_cambien(k);
+  if (tieptuc_sms){delay(5000);}
+  }
   /*if(digitalRead(IN1)==0){if (gui==0){delay(50);if(digitalRead(IN1)==0){goidt();Serial.println("IN1");gui=1;digitalWrite(OUT3,HIGH); String tinnhan="Alarm 1 OPEN";send_SMS(tinnhan);}}}
   else if(digitalRead(IN1)==1){if (gui==1){delay(50);if(digitalRead(IN1)==1){gui=0;}}}
   if(digitalRead(IN2)==0){if (gui1==0){delay(50);if(digitalRead(IN2)==0){goidt();Serial.println("IN2");gui1=1;digitalWrite(OUT3,HIGH);String tinnhan="Alarm 2 OPEN";send_SMS(tinnhan);}}}
   else if(digitalRead(IN2)==1){if (gui1==1){delay(50);if(digitalRead(IN2)==1){gui1=0;}}}
   if(digitalRead(IN3)==0){if (gui2==0){delay(50);if(digitalRead(IN3)==0){goidt();Serial.println("IN3");gui2=1;digitalWrite(OUT3,HIGH);String tinnhan="Alarm 3 OPEN";send_SMS(tinnhan);}}}
   else if(digitalRead(IN3)==1){if (gui2==1){delay(50);if(digitalRead(IN3)==1){gui2=0;}}} */
-  if ( (unsigned long) (millis() - timer_gio) > 10000 ){  
-                       //   const char* sensor = root["Sensor2"]["name"];
-                         // long time1 = root["Sensor2"]["value"][0];
-                        //  float time2 = root["Sensor2"]["value"][1];
-                          //Serial.println(sensor);
-                          //Serial.println(time1);
-                          //Serial.println(time2);
-                         // SensorStruct.S1_T=10.00;
-                          //tachsohex(RRS_ID);
-                       //   for (int i=0;i<90;i++){
-                         //   String tamm=String(*((unsigned int*)&SensorStruct + i));
-                        //    Serial.println(tamm);
-                        //  }
+ // Serial.println("TEST");
+  if ( (unsigned long) (millis() - timer_gio) > 10000 ){
                           timer_gio = millis();
                           thoigian_gio++;
                           if (thoigian_gio > 2160){ thoigian_gio=0;guitinnhan=3;}

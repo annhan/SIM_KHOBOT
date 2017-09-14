@@ -41,8 +41,8 @@ void connect_wifi(){
   WiFi.config(ip10,gateway10,subnet10,DNS);
 }
 long tacksotustring(String kitu){
-  Serial.println(kitu);
-  
+ // Serial.println(kitu);
+  long trave=100000;
   char a[12];
   int len=kitu.length();
   char s[len];
@@ -51,6 +51,7 @@ long tacksotustring(String kitu){
     len=strlen(s);
     byte thoat=0;
     j=0;
+    if (len>7){
     for(int i=8;i<len;i++)
     {
         if(s[i]>='0' && s[i]<='9')
@@ -63,8 +64,11 @@ long tacksotustring(String kitu){
         else if (thoat == 1){thoat=2;da_kttk= true;};
     }
     a[j] = 0;
-    long trave=atol(a);
+    trave=atol(a);
+    }
     Serial.println(trave);
     return  trave;
+    
+    
 }
 
