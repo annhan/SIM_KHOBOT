@@ -66,7 +66,7 @@ long tacksotustring(String kitu){
     a[j] = 0;
     trave=atol(a);
     }
-    Serial.println(trave);
+   // Serial.println(trave);
     return  trave;
     
     

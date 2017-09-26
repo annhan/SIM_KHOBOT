@@ -17,6 +17,8 @@ byte hexToDec(String hexString) {
   
   return decValue;
 }
+//17317D2C 2544CB250D 24 1731 09 01 23 020E 0C0C 197A 50 FCF5
+//17317D2C 2544CA250D 24 1731 09 01 33 01A1 FCFE B611 5D FA31
 
 //17317D2C 25442B250D 24 1731 11 02 23 01A3 0CD4 1D63 71 23 020D 0C30 1A71 2E FAFB
 //1731672C 25449D250D 24 1731 01 00 FE5A
@@ -107,6 +109,9 @@ void tachsohex(char* data){
                         }
                         break;
                       }
+                      case 51:{ //Gia tốc
+                        break;
+                      }
                       default :{
                         for (int j=0;j<15;j++){
                             if (*((int*)&reset_sensor_struc + j)>10){
@@ -126,7 +131,6 @@ boolean sosanh_cambien(int diachi){
   byte co_sms=0;
   if (*((boolean*)&cambiensosanh_struc + diachi)==true){
       //Serial.print("So Sanh ");
-      
       char sms_nd[60]="";
       char sms_da[60]="";
       *((boolean*)&cambiensosanh_struc + diachi)=false;

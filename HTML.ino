@@ -2168,75 +2168,41 @@ server.on("/set_ktk", []() {
     noidung = server.arg("text");
     guitinnhan=3;
    String content = "" ; //FPSTR(header); content += FPSTR(begin_title);
-   //content += WiFiConf.module_id;
-    //content += F(".local - set WiFi");
-  //  content += F("</title></head><body>");
-    content += F("ok");
-    server.send(200, "text/html", content);
+    server.send(200, "text/html", status_html_ok);
   });
 server.on("/set_noidung", []() {
     noidung = server.arg("text");
     guitinnhan=1;
-    String content = FPSTR(header); content += FPSTR(begin_title);
-    content += WiFiConf.module_id;
-    content += F(".local - set WiFi");
-    content += F("</title></head><body>");
-    content += F("<h1>ok</h1>");
-    server.send(200, "text/html", content);
+    server.send(200, "text/html", status_html_ok);
   });
   server.on("/set_noidung1", []() {
     noidung = server.arg("text");
     String new_phone = server.arg("newphone");
     new_phone.toCharArray(sdt_new, sizeof(sdt_new));
     guitinnhan=7;
-   String content = FPSTR(header); content += FPSTR(begin_title);
-   content += WiFiConf.module_id;
-    content += F(".local - set WiFi");
-    content += F("</title></head><body>");
-    content += F("<h1>ok</h1>");
-    server.send(200, "text/html", content);
+    server.send(200, "text/html", status_html_ok);
   });
   server.on("/set_rsSim", []() {  
     guitinnhan=4;
-    String content = FPSTR(header); content += FPSTR(begin_title);
-    content += WiFiConf.module_id;
-    content += F(".local - set WiFi");
-    content += F("</title></head><body>");
-    content += F("<h1>Set WiFi of ESP8266</h1>");
-    server.send(200, "text/html", content);   
+    server.send(200, "text/html", status_html_ok);   
   });
   server.on("/set_call", []() {
    // noidung = server.arg("text");
     guitinnhan=2;
-   String content = FPSTR(header); content += FPSTR(begin_title);
-   content += WiFiConf.module_id;
-    content += F(".local - set WiFi");
-    content += F("</title></head><body>");
-    content += F("<h1>Set WiFi of ESP8266</h1>");
-    server.send(200, "text/html", content);
+    server.send(200, "text/html", status_html_ok);
   });
     server.on("/set_call2", []() {
    // noidung = server.arg("text");
        String new_phone = server.arg("newphone");
     new_phone.toCharArray(sdt_new, sizeof(sdt_new));
     guitinnhan=8;
-   String content = FPSTR(header); content += FPSTR(begin_title);
-   content += WiFiConf.module_id;
-    content += F(".local - set WiFi");
-    content += F("</title></head><body>");
-    content += F("<h1>Set WiFi of ESP8266</h1>");
-    server.send(200, "text/html", content);
+    server.send(200, "text/html", status_html_ok);
   });
  server.on("/set_naptk", []() {
     manapthe = server.arg("Recharge");
     manapthe.trim();
     guitinnhan=5;
-    String content = FPSTR(header); content += FPSTR(begin_title);
-    content += WiFiConf.module_id;
-    content += F(".local - set WiFi");
-    content += F("</title></head><body>");
-    content += F("<h1>Set WiFi of ESP8266</h1>");
-    server.send(200, "text/html", content);
+    server.send(200, "text/html", status_html_ok);
   });
 //////////////
   server.on("/set_wifi_conf", []() {
@@ -2877,9 +2843,9 @@ void getHC() {
 
 
 ////////////////////////////////////////
-const char* host_jp = "nomuraeng.dip.jp";
-const int port_jp=8008;
-void send_back_server(String value) {
+//const char* host_jp = "nomuraeng.dip.jp";
+//const int port_jp=8008;
+/*void send_back_server(String value) {
       WiFiClient client1;
       String url=String("POST /DataRx/ HTTP/1.1");
       String url2="Host: nomuraeng.dip.jp";
@@ -2918,7 +2884,7 @@ void send_back_server(String value) {
           }
       else{client1.stop();Serial.println(F("Can't connect HC2")); }
   
-}
+}*/
 
 void update_fota(String value){
   
@@ -2938,8 +2904,8 @@ void update_fota(String value){
   http.addHeader("Content-Length", String(chieudai));
   int httpCode = http.POST(value); //Send the request
   String payload = http.getString(); //Get the response payload
- // Serial.println(httpCode); //Print HTTP return code
- // Serial.println(payload); //Print request response payload
+  //Serial.println(httpCode); //Print HTTP return code
+  //Serial.println(payload); //Print request response payload
   http.writeToStream(&Serial);
   http.end();
 }/*

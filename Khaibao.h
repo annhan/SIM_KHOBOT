@@ -1,5 +1,8 @@
 
-
+byte dtmf_sim=10;
+byte reset_esp=0;
+uint8_t macAddr[6];
+long lastReconnectAttempt = 0;
 
 const char space_html[] PROGMEM ="&nbsp;";
 const char _legend_html[] PROGMEM ="</a></legend>";

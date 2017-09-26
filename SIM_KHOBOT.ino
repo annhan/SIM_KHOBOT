@@ -1,4 +1,5 @@
 #include "Khaibao.h"
+#include <PubSubClient.h>
 #include <SoftwareSerial.h>
 #include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
@@ -17,26 +18,18 @@
 #define OUT1  15  // Ver cu  la 16
 #define OUT2  2
 #define OUT3  4
-
- /*char* json_sensor =
-      "{"
-      "\"Sensor1\":{\"name\":\"Sen1\",\"value\":[49.00,48.80,92.38]},"
-      "\"Sensor2\":{\"name\":\"Sen2\",\"value\":[49.00,48.80,92.38]},"
-      "\"Sensor3\":{\"name\":\"Sen3\",\"value\":[49.00,48.80,92.38]},"
-      "\"Sensor4\":{\"name\":\"Sen4\",\"value\":[49.00,48.80,92.38]},"
-      "\"Sensor5\":{\"name\":\"Sen5\",\"value\":[49.00,48.70,92.38]},"
-      "\"Sensor6\":{\"name\":\"Sen6\",\"value\":[49.00,48.70,92.38]},"
-      "\"Sensor7\":{\"name\":\"Sen7\",\"value\":[49.00,48.80,92.38]},"
-      "\"Sensor8\":{\"name\":\"Sen8\",\"value\":[49.00,48.70,92.38]},"
-      "\"Sensor9\":{\"name\":\"Sen9\",\"value\":[49.00,48.80,92.30]},"
-      "\"Sensor10\":{\"name\":\"Sen10\",\"value\":[49.00,48.70,92.38]},"
-      "\"Sensor11\":{\"name\":\"Sen11\",\"value\":[49.00,48.80,92.38]},"
-      "\"Sensor12\":{\"name\":\"Sen12\",\"value\":[49.00,48.80,92.38]},"
-      "\"Sensor13\":{\"name\":\"Sen13\",\"value\":[49.00,48.70,92.30]},"
-      "\"Sensor14\":{\"name\":\"Sen14\",\"value\":[49.00,48.70,92.30]},"
-      "\"Sensor15\":{\"name\":\"Sen15\",\"value\":[49.00,48.70,92.30]}"
- "}";
-char RRS_ID[]="17317D2C25442B250D24173111022301A30CD41D637123020D0C301A712EFAFB";*/
+WiFiClient client1;
+PubSubClient clientmqtt(client1);
+//#############################################
+uint16_t CAPTURE_BUFFER_SIZE = 1400;
+//*************************
+//  MQTT ******************
+#define mqtt_server "m10.cloudmqtt.com" //"mhome-nhamau.ddns.net" //"m10.cloudmqtt.com"
+char mqtt_topic[21];
+#define mqtt_user "odlnnhnh"
+#define mqtt_pwd "SgsHtUCxh34o"
+const uint16_t mqtt_port = 18159; // 1883; //12535; //1883
+//****************************
 
 //17317D2C 25442B250D 24 1731 11 02 23 01A3 0CD4 1D63 71 23 020D 0C30 1A71 2E FAFB
 
@@ -634,6 +627,7 @@ void setup() {
     WiFi.mode(WIFI_AP);
     WiFi.softAP("GSM mHome","88888888");
   }
+  WiFi.macAddress(macAddr);
   httpUpdater.setup(&server, update_path, update_username, update_password);
   setupWeb();
   setupWiFiConf();  
@@ -648,6 +642,15 @@ void setup() {
           manap=WiFiConf.sta_manap;
           manap.trim();
   guitinnhan=3; //mac dinh bang 3 để kiểm tra tài khang
+
+  //snprintf (mqtt_topic, 21, "mH/%02x%02x%02x%02x%02x%02x",macAddr[WL_MAC_ADDR_LENGTH - 5], macAddr[WL_MAC_ADDR_LENGTH - 6],macAddr[WL_MAC_ADDR_LENGTH - 4], macAddr[WL_MAC_ADDR_LENGTH - 3],macAddr[WL_MAC_ADDR_LENGTH - 2], macAddr[WL_MAC_ADDR_LENGTH - 1]);
+  //Serial.println(mqtt_topic);
+  snprintf (mqtt_topic, 21, "mHomeKB");
+
+ // mqtt_topic="mHomeKB";
+  clientmqtt.setServer(mqtt_server, mqtt_port);
+  clientmqtt.setCallback(callback);
+  lastReconnectAttempt = 0;
   //write_sensor_eeprom(); 
   //delay(1000);
  /* if (!root.success()) {Serial.println("parseObject() failed");}  
@@ -660,8 +663,6 @@ void setup() {
   Serial.println(time1);
   Serial.println(time2);
   } */
-
-  
 }
 void loop() {
 
@@ -672,14 +673,29 @@ void loop() {
               if (statusmang==0){digitalWrite(status_led, LOW); 
               statusmang=1;
               cho=0;
-              Serial.println("NNNN");
-              WiFi.softAP("GSM mHome","88888888",1,1);}     
+             // Serial.println("NNNN");
+              WiFi.softAP("GSM mHome","88888888",1,1);} 
+                //MQTT
+              if (!clientmqtt.connected()) {
+                    long now = millis();
+                    if (now - lastReconnectAttempt > 5000) {
+                      lastReconnectAttempt = now;
+                      // Attempt to reconnect
+                      if (reconnect()) {
+                        lastReconnectAttempt = 0;
+                      }
+                    }
+                  } else {
+                    clientmqtt.loop();
+              }
+              //////////////////////    
               break;
     default:
-          if (statusmang!=0){ statusmang=0;timeled = millis();} 
+          if (statusmang!=0){ statusmang=0;reset_esp=0;timeled = millis();} 
           if (cho>=50){
             connect_wifi();
             cho=0;
+            reset_esp=reset_esp+1;
           }
           else
           {
@@ -689,7 +705,8 @@ void loop() {
                           timeled = millis();
                           cho++;
                   }
-          } 
+          }
+          if (reset_esp>5){ESP.reset();} 
           break;
   }
 
@@ -728,10 +745,43 @@ void loop() {
     default:
           break;
   }
-
+  switch (dtmf_sim){
+    case 0:
+          dtmf_sim=10;
+          break;
+    case 1:
+          dtmf_sim=10;
+          break;
+    case 2:
+          dtmf_sim=10;
+          break;
+    case 3:
+          dtmf_sim=10;
+          break;
+    case 4:
+          dtmf_sim=10;
+          break;
+    case 5:
+          dtmf_sim=10;
+          break;
+    case 6:
+          dtmf_sim=10;
+          break;
+    case 7:
+          dtmf_sim=10;
+          break;
+    case 8:
+          dtmf_sim=10;
+          break;
+    case 9:
+          dtmf_sim=10;
+          break;
+  }
   if (html_khobot){
+    
     str_html_khobot.trim();
     html_khobot=false;
+    //Serial.println(str_html_khobot);
     int str_len = str_html_khobot.length() + 1;
     char char_array[str_len];
     //send_back_server(str_html_khobot);
@@ -739,11 +789,12 @@ void loop() {
     str_html_khobot.toCharArray(char_array, str_len);
     str_html_khobot="";
     tachsohex(char_array);
+
   }
   
   for (int k=0;k<15;k++){
-  boolean tieptuc_sms=sosanh_cambien(k);
-  if (tieptuc_sms){delay(5000);}
+        boolean tieptuc_sms=sosanh_cambien(k);
+        if (tieptuc_sms){delay(5000);}
   }
   /*if(digitalRead(IN1)==0){if (gui==0){delay(50);if(digitalRead(IN1)==0){goidt();Serial.println("IN1");gui=1;digitalWrite(OUT3,HIGH); String tinnhan="Alarm 1 OPEN";send_SMS(tinnhan);}}}
   else if(digitalRead(IN1)==1){if (gui==1){delay(50);if(digitalRead(IN1)==1){gui=0;}}}
@@ -753,12 +804,36 @@ void loop() {
   else if(digitalRead(IN3)==1){if (gui2==1){delay(50);if(digitalRead(IN3)==1){gui2=0;}}} */
  // Serial.println("TEST");
   if ( (unsigned long) (millis() - timer_gio) > 10000 ){
+                          if (thoigian_gio % 2 ==0){
+                                if (statusmang==1){
+                                String trave="{";
+                                for (int i=0;i<15;i++){
+                                  if (i<14){
+                                  trave +="\"S" + String(i)+"\":{\"N\":\"" + String(*((unsigned int*)&SensorStruct + (i*8)));
+                                   trave +="\",\"V\":[" + String(*((float*)&SensorStruct + ((i*8)+2))) + "," + String(*((float*)&SensorStruct + ((i*8)+3))) + ","+ String(*((float*)&SensorStruct + ((i*8)+4))) + "," + String(*((float*)&SensorStruct + ((i*8)+5))) + ","+ String(*((float*)&SensorStruct + ((i*8)+6))) + "," + String(*((float*)&SensorStruct + ((i*8)+7))) + "," + String(*((unsigned int*)&SensorStruct + ((i*8)+1))) + "]},";
+                                  }
+                                  else{
+                                  trave +="\"S" + String(i)+"\":{\"N\":\"" + String(*((unsigned int*)&SensorStruct + (i*8)));
+                                  trave += "\",\"V\":[" + String(*((float*)&SensorStruct + ((i*8)+2))) + "," + String(*((float*)&SensorStruct + ((i*8)+3))) + ","+ String(*((float*)&SensorStruct + ((i*8)+4))) + "," + String(*((float*)&SensorStruct + ((i*8)+5))) + ","+ String(*((float*)&SensorStruct + ((i*8)+6))) + "," + String(*((float*)&SensorStruct + ((i*8)+7))) + "," + String(*((unsigned int*)&SensorStruct + ((i*8)+1))) + "]}";
+                                  }
+                                }
+                                trave += "}";
+                                int chieudai_mqtt=trave.length();
+                                //Serial.println(chieudai_mqtt);
+                                char msg[chieudai_mqtt+1];
+                            
+                                trave.toCharArray(msg, sizeof(msg));
+                                
+                               // snprintf (msg, 100, "{\"ip\":\"%i.%i.%i.%i\",\"command\":\"SendIR\",\"para\":{\"type\":\"ML\",\"remote\":\"Daikin\",\"button\":\"ON\"}}",ip[0],ip[1],ip[2],ip[3]);
+                               // Serial.println(msg);
+                                clientmqtt.publish(mqtt_topic, msg);
+                                }
+                          }
                           timer_gio = millis();
                           thoigian_gio++;
                           if (thoigian_gio > 2160){ thoigian_gio=0;guitinnhan=3;}
                           Serial.println("AT");
-                          if (da_kttk){ if (sotien<15000){da_kttk=false; noidung="Chu y : So TK con "; noidung = noidung + String(sotien);noidung = noidung + "d. De nap soan cu phap NAP:mathe. gui den sdt nay";guitinnhan=1;}};
-                          
+                          if (da_kttk){ if (sotien<15000 && sotien>1000){da_kttk=false; noidung="Chu y : So TK con "; noidung = noidung + String(sotien);noidung = noidung + "d. De nap soan cu phap NAP:mathe. gui den sdt nay";guitinnhan=1;}};                          
   }
 }
 

@@ -8,7 +8,6 @@ void receive_uart() {
   if(Serial.available()>0) {
    
     uart_tam= Serial.read();
-   // Serial.println(c);
     if (xbuff >= buffer_size) {
       xbuff=0;     
     }
@@ -16,7 +15,7 @@ void receive_uart() {
       buffer[xbuff++]=uart_tam;
     } 
     if (strstr(buffer, "CMT") != NULL)    
-    {      // Serial.println("CMT OK");
+    { 
             xbuff=0;
             memset(buffer, '\0', buffer_size);      // Initialize the string
             memset(response, '\0', buffer_size); 
@@ -34,7 +33,7 @@ void receive_uart() {
                     }              
                 }          
           }
-          while((answer == 0) && ((millis() - previous) < 5000));   
+          while((answer == 0) && ((millis() - previous) < 3000));   
           
           char * strtokIndx; // this is used by strtok() as an index
           strtokIndx = strtok(response, "\""); 
@@ -46,7 +45,7 @@ void receive_uart() {
           x=0;
           memset(response, '\0', buffer_size); 
           previous = millis();  
-          do {delay(2);
+          do {//delay(2);
                 if(Serial.available() != 0){                    
                     response[x] = Serial.read();
                     //x++;
@@ -56,7 +55,7 @@ void receive_uart() {
                       answer = 1;
                     }              
                 }
-          } while((answer == 0) && ((millis() - previous) < 5000));  
+          } while((answer == 0) && ((millis() - previous) < 2000));  
           if ((strstr(WiFiConf.sta_SDT1,phone_number) != NULL) or (strstr( WiFiConf.sta_SDT2,phone_number) != NULL) or (strstr( WiFiConf.sta_SDT3,phone_number) != NULL) or (strstr(WiFiConf.sta_SDT4,phone_number) != NULL)){
                   if (strstr(response,"KTTK") != NULL) {statusnaptk=1;kttkcusd();}
                   else if (strstr(response,"On") != NULL) {
@@ -117,7 +116,7 @@ void receive_uart() {
            i=0;           
            previous = millis(); 
            answer = 0; 
-           do {delay(1);
+           do {//delay(1);
                 if(Serial.available() != 0){
                     response[x] = Serial.read();                             
                     if (i>3){x++;}
@@ -128,7 +127,7 @@ void receive_uart() {
                 }              
             }         
           }
-          while((answer == 0) && ((millis() - previous) < 5000));  
+          while((answer == 0) && ((millis() - previous) < 3000));  
       
           String manap=response;
           manap.trim();
@@ -146,7 +145,7 @@ void receive_uart() {
             memset(response, '\0', buffer_size); 
           previous = millis();  
           answer=0;
-               do {delay(2);
+          do {//delay(2);
                 if(Serial.available() != 0){
                     response[x] = Serial.read();
                     x++;
@@ -154,7 +153,7 @@ void receive_uart() {
                 if (strstr(response, "\n") != NULL){answer = 1;}              
             }          
           }
-          while((answer == 0) && ((millis() - previous) < 5000)); 
+          while((answer == 0) && ((millis() - previous) < 1000)); 
          
           char * strtokIndx; // this is used by strtok() as an index
           strtokIndx = strtok(response, "\""); 
@@ -169,12 +168,63 @@ void receive_uart() {
             Serial.println(F("ATH"));
           }
       }
+   else if(strstr(buffer, "DTMF:") != NULL)    
+      { yield();
+        xbuff=0;
+          x=0;
+            memset(buffer, '\0', buffer_size);      // Initialize the string
+            memset(response, '\0', buffer_size); 
+          previous = millis();  
+          answer=0;
+          do {
+                if(Serial.available() != 0){
+                    response[x] = Serial.read();
+                    x++;
+                if (strstr(response, "\n") != NULL){answer = 1;}              
+            }          
+          }
+          while((answer == 0) && ((millis() - previous) < 1000)); 
+         if (strstr(response,"1") != NULL) {
+          dtmf_sim=1;
+         }
+         else if (strstr(response,"2") != NULL) {
+          dtmf_sim=2;
+         }
+                  else if (strstr(response,"3") != NULL) {
+                    dtmf_sim=3;
+         }
+                  else if (strstr(response,"4") != NULL) {
+                    dtmf_sim=4;
+         }
+                  else if (strstr(response,"5") != NULL) {
+                    dtmf_sim=5;
+         }
+                  else if (strstr(response,"6") != NULL) {
+                    dtmf_sim=6;
+         }
+                  else if (strstr(response,"7") != NULL) {
+                    dtmf_sim=7;
+         }
+                  else if (strstr(response,"8") != NULL) {
+                    dtmf_sim=8;
+         }
+                  else if (strstr(response,"9") != NULL) {
+                    dtmf_sim=9;
+         }
+                  else if (strstr(response,"0") != NULL) {
+                    dtmf_sim=0;
+         }
+         
+      }
    else if(strstr(buffer,"SMS Ready") != NULL){ guitinnhan=6;
                   memset(buffer, '\0', buffer_size);      // Initialize the string
                   memset(response, '\0', buffer_size); 
                   xbuff=0;
   }
-  else if (uart_tam=='+'){xbuff=0; }     
+  else if(strstr(buffer,"OK") != NULL){ 
+                  xbuff=0;
+  }
+  else if (uart_tam=='+'){xbuff=0;}     
   }
 }
 void init_SIM900A() { 
@@ -197,7 +247,11 @@ void init_SIM900A() {
   bien=0;
   do { answer = sendAT("AT+CSAS", "OK",200);bien=bien+1; if(bien>5){answer=1;}} while(answer==0);
   bien=0;
+  do { answer = sendAT("AT+CSCLK=0", "OK",200);bien=bien+1; if(bien>5){answer=1;}} while(answer==0);
+  bien=0;
   do { answer = sendAT("AT+CSQ", "OK",200);bien=bien+1; if(bien>5){answer=1;}} while(answer==0);
+  bien=0;
+  do { answer = sendAT("AT + DDET = 1,1000,0,0", "OK",200);bien=bien+1; if(bien>5){answer=1;}} while(answer==0); 
   answer=0;
   yield();
   }
@@ -212,6 +266,7 @@ void init_SIM900A() {
   return;
 }*/
 //******************************************************************************************************
+
 int sendAT(char* ATcommand, char* expected_answer, unsigned int timeout) {
   memset(buffer, '\0', buffer_size);      // Initialize the string
   memset(response, '\0', buffer_size);
@@ -257,6 +312,24 @@ void delay_nhan(unsigned int timeout){
   }
   while((millis() - previous) < timeout); 
 }
+boolean send_end() {
+  memset(buffer, '\0', buffer_size);      // Initialize the string
+  memset(response, '\0', buffer_size);
+   answer=0;
+  Serial.write(0x1A);
+  x = 0;
+  previous = millis();
+  do {
+    if(Serial.available() != 0){    
+      response[x] = Serial.read();
+      x++;
+      if (strstr(response, "CMGS") != NULL){answer=1;return true;}
+    } 
+    delay(1);
+  }
+  while((answer==0)&& (millis() - previous) < 2000);
+  return false;
+}
 //******************************************************************************************************
 void power_on(){ 
      if(answer==0)
@@ -277,38 +350,41 @@ void send_SMS(String noidungsms) {
       delay(500);
      sprintf(aux_string,"AT+CMGS=\"%s\"",WiFiConf.sta_SDT1);
      do { if (bien%100==0){answer = sendATSMS(aux_string,">",1000);} bien=bien+1;delay_nhan(50);if(bien>200){answer=2;}} while(answer==0); 
-     if(answer==1){ Serial.print(noidungsms);delay(100);Serial.write((char)26);}
-     else {delay(100);Serial.write((char)26);}
+     if(answer==1){ Serial.print(noidungsms);delay(100);send_end();}
+     else {delay(100);Serial.write((char)27);}
     }
     bien=0;
     answer=0;
     if (WiFiConf.sta_SDT2[0]!='x'){
+      delay(1000);
       sendAT("AT+CMGF=1", "OK",200);
-     delay(1500);
+     delay(500);
      sprintf(aux_string,"AT+CMGS=\"%s\"",WiFiConf.sta_SDT2);
      do { if (bien%50==0){answer = sendATSMS(aux_string,">",1000);}bien=bien+1;delay_nhan(50);if(bien>200){answer=2;}} while(answer==0); 
-     if(answer==1){ Serial.print(noidungsms);delay(100);Serial.write((char)26);}
-     else {delay(100);Serial.write((char)26);}
+     if(answer==1){ Serial.print(noidungsms);delay(100);send_end();}
+     else {delay(100);Serial.write((char)27);}
     }
     bien=0;
     answer=0;
     if (WiFiConf.sta_SDT3[0]!='x'){
+      delay(1000);
       sendAT("AT+CMGF=1", "OK",200);
-     delay(1500);
+     delay(500);
      sprintf(aux_string,"AT+CMGS=\"%s\"",WiFiConf.sta_SDT3);
      do { if (bien%50==0){answer = sendATSMS(aux_string,">",1000);}bien=bien+1;delay_nhan(50);if(bien>200){answer=2;}} while(answer==0); 
-     if(answer==1){ Serial.print(noidungsms);delay(100);Serial.write((char)26);  }
-     else {delay(100);Serial.write((char)26);}
+     if(answer==1){ Serial.print(noidungsms);delay(100);send_end();}
+     else {delay(100);Serial.write((char)27);}
     }
     bien=0;
     answer=0;
     if (WiFiConf.sta_SDT4[0]!='x'){
+      delay(1000);
       sendAT("AT+CMGF=1", "OK",200);
-    delay(1500);
+    delay(500);
      sprintf(aux_string,"AT+CMGS=\"%s\"",WiFiConf.sta_SDT4);
      do { if (bien%50==0){answer = sendATSMS(aux_string,">",1000);} bien=bien+1;delay_nhan(50);if(bien>200){answer=2;}} while(answer==0); 
-     if(answer==1){ Serial.print(noidungsms);delay(100);Serial.write((char)26);  }
-     else {delay(100);Serial.write((char)26);}
+     if(answer==1){ Serial.print(noidungsms);delay(100);send_end();}
+     else {delay(100);Serial.write((char)27);}
     }
     statusnaptk=0;
     yield();
@@ -320,8 +396,8 @@ void send_SMS1(String noidungsms) {
       delay(1000);
      sprintf(aux_string,"AT+CMGS=\"%s\"",WiFiConf.sta_SDT1);
      do { if (bien%100==0){answer = sendATSMS(aux_string,">",1000);}bien=bien+1;delay_nhan(50); if(bien>200){answer=2;}} while(answer==0); 
-     if(answer==1){ Serial.print(noidungsms);delay(100);Serial.write((char)26);}
-     else {delay(100);Serial.write((char)26);}
+     if(answer==1){ Serial.print(noidungsms);delay(100);Serial.write(0x1A);}
+     else {delay(100);Serial.write((char)27);}
     }
     bien=0;
     answer=0;
@@ -329,8 +405,8 @@ void send_SMS1(String noidungsms) {
       delay(2000);
      sprintf(aux_string,"AT+CMGS=\"%s\"",WiFiConf.sta_SDT2);
      do { if (bien%50==0){answer = sendATSMS(aux_string,">",1000);}bien=bien+1;delay_nhan(50);if(bien>200){answer=2;}} while(answer==0); 
-     if(answer==1){ Serial.print(noidungsms);delay(100);Serial.write((char)26);}
-     else {delay(100);Serial.write((char)26);}
+     if(answer==1){ Serial.print(noidungsms);delay(100);Serial.write(0x1A);}
+     else {delay(100);Serial.write((char)27);}
     }
     bien=0;
     answer=0;
@@ -338,8 +414,8 @@ void send_SMS1(String noidungsms) {
       delay(2000);
      sprintf(aux_string,"AT+CMGS=\"%s\"",WiFiConf.sta_SDT3);
      do { if (bien%50==0){answer = sendATSMS(aux_string,">",1000);} bien=bien+1;delay_nhan(50);if(bien>200){answer=2;}} while(answer==0); 
-     if(answer==1){ Serial.print(noidungsms);delay(100);Serial.write((char)26);  }
-     else {delay(100);Serial.write((char)26);}
+     if(answer==1){ Serial.print(noidungsms);delay(100);Serial.write(0x1A);  }
+     else {delay(100);Serial.write((char)27);}
     }
     bien=0;
     answer=0;
@@ -347,8 +423,8 @@ void send_SMS1(String noidungsms) {
       delay(2000);
      sprintf(aux_string,"AT+CMGS=\"%s\"",WiFiConf.sta_SDT4);
      do { if (bien%50==0){answer = sendATSMS(aux_string,">",1000);} bien=bien+1;delay_nhan(50);if(bien>200){answer=2;}} while(answer==0); 
-     if(answer==1){ Serial.print(noidungsms);delay(100);Serial.write((char)26);  }
-     else {delay(100);Serial.write((char)26);}
+     if(answer==1){ Serial.print(noidungsms);delay(100);Serial.write(0x1A);  }
+     else {delay(100);Serial.write((char)27);}
     }
     
     bien=0;
@@ -357,8 +433,8 @@ void send_SMS1(String noidungsms) {
      delay(2000);
      sprintf(aux_string,"AT+CMGS=\"%s\"",sdt_new);
      do { if (bien%50==0){answer = sendATSMS(aux_string,">",1000);} bien=bien+1;delay_nhan(50);if(bien>200){answer=2;}} while(answer==0); 
-     if(answer==1){ Serial.print(noidungsms);delay(100);Serial.write(26);  }
-     else {delay(100);Serial.write((char)26);}
+     if(answer==1){ Serial.print(noidungsms);delay(100);Serial.write(0x1A);}
+     else {delay(100);Serial.write((char)27);}
     }
     statusnaptk=0;
     yield();

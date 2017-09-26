@@ -29,12 +29,10 @@ void saveWiFiConf(void) {
   printWiFiConf();
 }
 void setDefaultModuleId(char* dst) {
-  uint8_t macAddr[WL_MAC_ADDR_LENGTH];
   WiFi.macAddress(macAddr);
   sprintf(dst, "%s%02x%02x", NAME_PREF, macAddr[WL_MAC_ADDR_LENGTH - 2], macAddr[WL_MAC_ADDR_LENGTH - 1]);
 }
 void resetModuleId(void) {
-  uint8_t macAddr[WL_MAC_ADDR_LENGTH];
   WiFi.macAddress(macAddr);
   setDefaultModuleId(WiFiConf.module_id);
 }
